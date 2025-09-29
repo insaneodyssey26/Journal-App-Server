@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Component
 public class JournalEntryService {
 
@@ -15,4 +17,9 @@ public class JournalEntryService {
     public void saveEntry(JournalEntry entry) {
         journalEntryRepository.save(entry);
     }
+
+    public List<JournalEntry> findAll() {
+        return journalEntryRepository.findAll();
+    }
 }
+
