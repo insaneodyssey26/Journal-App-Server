@@ -21,8 +21,13 @@ public class JournalEntryController {
     private JournalEntryService journalEntryService;
 
     @GetMapping
-    public List<JournalEntry> getAllEntries() {
-        return journalEntryService.findAll();
+    public ResponseEntity<?> getAllEntries() {
+
+        List<JournalEntry> all = journalEntryService.findAll();
+        if (all != null) {
+            return new ResponseEntity<>(all, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
@@ -46,21 +51,20 @@ public class JournalEntryController {
     }
 
     @DeleteMapping("id/{id}")
-    public boolean deleteEntryById(@PathVariable ObjectId id) {
-
+    public ResponseEntity<?> deleteEntryById(@PathVariable ObjectId id) {
         journalEntryService.deleteById(id);
-        return true;
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("id/{id}")
-    public JournalEntry updateEntrybyId(@PathVariable ObjectId id, @RequestBody JournalEntry newEntry) {
+    public ResponseEntity<?> updateEntrybyId(@PathVariable ObjectId id, @RequestBody JournalEntry newEntry) {
         JournalEntry oldEntry = journalEntryService.findById(id).orElse(null);
         if (oldEntry != null) {
             oldEntry.setTitle((newEntry.getTitle() != null) ? newEntry.getTitle() : oldEntry.getTitle());
             oldEntry.setContent((newEntry.getContent() != null) ? newEntry.getContent() : oldEntry.getContent());
+            journalEntryService.saveEntry(oldEntry);
+            return new ResponseEntity<>(oldEntry,HttpStatus.OK);
         }
-
-        journalEntryService.saveEntry(oldEntry);
-        return oldEntry;
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
