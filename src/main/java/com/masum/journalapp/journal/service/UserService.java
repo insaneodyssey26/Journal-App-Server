@@ -1,8 +1,6 @@
 package com.masum.journalapp.journal.service;
 
-import com.masum.journalapp.journal.entity.JournalEntry;
 import com.masum.journalapp.journal.entity.User;
-import com.masum.journalapp.journal.repository.JournalEntryRepository;
 import com.masum.journalapp.journal.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class UserEntryService {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
