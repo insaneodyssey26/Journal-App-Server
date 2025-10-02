@@ -1,11 +1,12 @@
 package com.masum.journalapp.journal.controller;
 
 import com.masum.journalapp.journal.entity.JournalEntry;
+import com.masum.journalapp.journal.entity.User;
 import com.masum.journalapp.journal.service.JournalEntryService;
+import com.masum.journalapp.journal.service.UserService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +21,22 @@ public class JournalEntryController {
     @Autowired
     private JournalEntryService journalEntryService;
 
-    @GetMapping
-    public ResponseEntity<?> getAllEntries() {
-
-        List<JournalEntry> all = journalEntryService.findAll();
+    @Autowired
+    public UserService userService;
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getAllEntriesOfUser(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+        List<JournalEntry> all = user.getJournalEntries();
         if (all != null) {
             return new ResponseEntity<>(all, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping
-    public ResponseEntity<JournalEntry> postEntry(@RequestBody JournalEntry journalEntry) {
+    @PostMapping("/{username}")
+    public ResponseEntity<JournalEntry> postEntry(@RequestBody JournalEntry journalEntry, @PathVariable String username) {
         try {
-            journalEntry.setDate(LocalDateTime.now());
-            journalEntryService.saveEntry(journalEntry);
+            journalEntryService.saveEntry(journalEntry, username);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -62,7 +64,7 @@ public class JournalEntryController {
         if (oldEntry != null) {
             oldEntry.setTitle((newEntry.getTitle() != null) ? newEntry.getTitle() : oldEntry.getTitle());
             oldEntry.setContent((newEntry.getContent() != null) ? newEntry.getContent() : oldEntry.getContent());
-            journalEntryService.saveEntry(oldEntry);
+//            journalEntryService.saveEntry(oldEntry, user);
             return new ResponseEntity<>(oldEntry,HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

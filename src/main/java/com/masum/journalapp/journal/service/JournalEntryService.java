@@ -1,6 +1,7 @@
 package com.masum.journalapp.journal.service;
 
 import com.masum.journalapp.journal.entity.JournalEntry;
+import com.masum.journalapp.journal.entity.User;
 import com.masum.journalapp.journal.repository.JournalEntryRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,14 @@ public class JournalEntryService {
     @Autowired
     private JournalEntryRepository journalEntryRepository;
 
-    public void saveEntry(JournalEntry entry) {
-        journalEntryRepository.save(entry);
+    @Autowired
+    private UserService userService;
+
+    public void saveEntry(JournalEntry entry, String username) {
+        User user = userService.findByUsername(username);
+        JournalEntry saved = journalEntryRepository.save(entry);
+        user.getJournalEntries().add(saved);
+        userService.saveEntry(user);
     }
 
     public List<JournalEntry> findAll() {
