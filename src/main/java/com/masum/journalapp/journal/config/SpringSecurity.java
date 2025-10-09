@@ -15,8 +15,10 @@ public class SpringSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/hello").permitAll()
                 .anyRequest().authenticated()
             )
+            .formLogin(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
         return http.build();
     }
