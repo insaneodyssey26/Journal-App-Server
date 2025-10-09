@@ -9,17 +9,15 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+
+// this class will be used for security configuration
 public class SpringSecurity {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/hello").permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(Customizer.withDefaults())
-            .httpBasic(Customizer.withDefaults());
-        return http.build();
+        http.authorizeHttpRequests()
+                .requestMatchers("/journal/**").authenticated()
+                .anyRequest().permitAll()
+                .httpBasic;
     }
 }
